@@ -36,9 +36,11 @@ function createInitialBoard(): Square[][] {
       piece: null,
       isSelected: false,
       isHovered: false,
-      isTarget: false,
+      targets: [],
+      moves: [],
       isPossible: false,
       theme: 'default',
+      
     }))
   );
 }
