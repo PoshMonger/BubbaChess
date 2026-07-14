@@ -20,13 +20,16 @@ const Piece = ({ piece }: { piece: { image: string; name: string } }) => {
   };
 
   return (
-    <div
+    <img
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-    >
-      <img src={image} alt={name} className={`${isHovered ? "hovered" : ""} ${selected ? "selected" : ""}`} />
-    </div>
+      width={60}
+      height={60}
+      src={image}
+      alt={name}
+      className={`${isHovered ? "hovered" : ""} ${selected ? "selected" : ""}`}
+    />
   );
 };
 
