@@ -1,0 +1,14 @@
+.piece {
+  width: 100px;
+  height: 100px;
+  border: 1px solid black;
+  display: inline-block;
+}
+
+.piece.hovered {
+  border: 2px solid red;
+}
+
+.piece.selected {
+  border: 2px solid blue;
+}

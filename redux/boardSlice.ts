@@ -36,14 +36,23 @@ function createInitialBoard(): Square[][] {
       piece: null,
       isSelected: false,
       isHovered: false,
-      targets: [],
-      moves: [],
-      isPossible: false,
-      theme: 'default',
     }))
   );
+  
 }
 
+export interface Piece {
+  image: string;
+  name: string;
+  isSelected: boolean;
+  isHovered: boolean;
+  targets: string[];
+  moves: string[];
+  color: 'white' | 'black';
+  type: 'pawn' | 'knight' | 'bishop' | 'rook' | 'queen' | 'king';
+  value: number;
+  isCaptured: boolean;
+}
 // createSlice generates the reducer + action creators for us from this config.
 export const boardSlice = createSlice({
   name: "board", // label shown in Redux DevTools and baked into action type strings
