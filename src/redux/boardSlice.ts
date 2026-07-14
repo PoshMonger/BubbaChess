@@ -1,7 +1,7 @@
 // boardSlice.ts
 // A Redux Toolkit "slice" bundles together one piece of your app's state
 // (here: the chessboard) plus the functions ("reducers") allowed to change it.
-
+import Bishop from "../components/Pieces/Bishop/Bishop";
 import { createSlice } from "@reduxjs/toolkit";
 // PayloadAction is only a TYPE (it describes an action that carries data).
 // This project has `verbatimModuleSyntax: true`, so type-only imports MUST use `import type`.
@@ -40,7 +40,12 @@ export interface Square {
 const initialBoard: Square[][] = [
   // ---- Rank 8 (top row) ----
   [
-    { coordinate: "a8", row: 8, column: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "a8", row: 8, column: "a", piece: {
+
+      name: "bishop",
+      color: "white",
+      type: "bishop",
+      value: 3, isSelected: false, isHovered: false, theme: "default" }},
     { coordinate: "b8", row: 8, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
     { coordinate: "c8", row: 8, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
     { coordinate: "d8", row: 8, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
