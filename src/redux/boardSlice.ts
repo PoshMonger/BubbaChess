@@ -1,11 +1,13 @@
 // boardSlice.ts
 // A Redux Toolkit "slice" bundles together one piece of your app's state
 // (here: the chessboard) plus the functions ("reducers") allowed to change it.
-import Bishop from "../components/Pieces/Bishop/Bishop";
 import { createSlice } from "@reduxjs/toolkit";
 // PayloadAction is only a TYPE (it describes an action that carries data).
 // This project has `verbatimModuleSyntax: true`, so type-only imports MUST use `import type`.
 import type { PayloadAction } from "@reduxjs/toolkit";
+// The board's shapes now live in one shared place (src/types) instead of being
+// defined here, so every file agrees on what a Square and a Board look like.
+import type { Board } from "../types";
 
 // The COLUMNS are called "files" and are labelled with LETTERS a–h.
 // `export`ed so other modules can reuse them AND so they aren't flagged as
@@ -17,17 +19,8 @@ export const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"];
 // numbers from 8 down to 1 so the FIRST row we build is the top row of the board.
 export const RANKS = [8, 7, 6, 5, 4, 3, 2, 1];
 
-// Describe the shape of ONE square. Declaring it as an interface lets TypeScript
-// catch mistakes for us (a missing field, or a value of the wrong type).
-export interface Square {
-  coordinate: string;   // its chess name, e.g. "e4" — always the file LETTER then the rank NUMBER
-  row: number;          // the rank, a NUMBER 1–8  -> this is the ROW (what you asked for)
-  column: string;       // the file, a LETTER a–h  -> this is the COLUMN (what you asked for)
-  piece: string | null; // which piece stands here (e.g. "white-king"), or null for an empty square
-  isSelected: boolean;  // true while the user has this square selected
-  isHovered: boolean;   // true while the mouse is hovering over this square // true when this square is a highlighted legal destination
-  theme: string;        // the visual theme/CSS class for the square, e.g. "default"
-}
+// (The Square interface used to live here. It now lives in src/types/board.ts so
+//  that components and future game logic can import the same definition.)
 
 // The full 8×8 board written out square-by-square (a "board literal") so you can
 // hand-edit individual squares — e.g. set `piece: "white-king"` on e1, or give a
@@ -37,15 +30,13 @@ export interface Square {
 // Rows are listed rank 8 (top of the board) down to rank 1 (bottom), matching how
 // the board is drawn. Every square starts empty (piece: null) and unhighlighted;
 // change any field on any line below without disturbing the others.
-const initialBoard: Square[][] = [
+const initialBoard: Board = [
   // ---- Rank 8 (top row) ----
   [
-    { coordinate: "a8", row: 8, column: "a", piece: {
-
-      name: "bishop",
-      color: "white",
-      type: "bishop",
-      value: 3, isSelected: false, isHovered: false, theme: "default" }},
+    // Example of a NON-empty square: a8 holds a white bishop. The `piece` value is
+    // a Piece object (name/color/type/value); the square's OWN flags (isSelected,
+    // isHovered, theme) stay on the square, NOT inside the piece.
+    { coordinate: "a8", row: 8, column: "a", piece: { name: "bishop", color: "white", type: "bishop", value: 3 }, isSelected: false, isHovered: false, theme: "default" },
     { coordinate: "b8", row: 8, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
     { coordinate: "c8", row: 8, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
     { coordinate: "d8", row: 8, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
@@ -144,7 +135,7 @@ export const boardSlice = createSlice({
     // (Your old code did `state.board = ...`, but there is no `.board` property —
     //  the array is the state, so assigning to `state.board` did nothing useful.)
     // The `_` in `_state` tells TypeScript we intentionally don't use that argument.
-    setBoard: (_state, action: PayloadAction<Square[][]>) => action.payload,
+    setBoard: (_state, action: PayloadAction<Board>) => action.payload,
   },
 });
 

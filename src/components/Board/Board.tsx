@@ -1,20 +1,33 @@
-import React from 'react';
+// Board.tsx — draws the whole chessboard from the Redux state.
 import './Board.css'
-import { useSelector } from 'react-redux';
-import File from '../File/File'; //TODO: create types for the board 
+import { useSelector } from 'react-redux'
+import File from '../File/File'
+// RootState describes the shape of the ENTIRE Redux store. Importing it lets us
+// type the selector below, which is how `board` becomes a real Board (Square[][])
+// instead of `any`. It is a type-only import (`verbatimModuleSyntax: true`).
+import type { RootState } from '../../redux/store'
+
 const Board = () => {
-  const board = useSelector((state: any) => state.board);
+  // Read the 8×8 array of squares out of the store. Typing `state` as RootState
+  // means TypeScript knows `state.board` is a Board, so `row`/`square` below are
+  // fully typed for free (no manual annotations, no `any`).
+  const board = useSelector((state: RootState) => state.board)
+
   return (
     <div className='board'>
-      {board.map((row, index) => (
-        <div key={index} className='row'>
-          {row.map((cell: { coordinate: string; row: string; column: number; }, index: number): JSX.Element => (   
-                <File piece={cell.piece} isSelected={cell.isSelected} isHovered={cell.isHovered} isTarget={cell.isTarget} isPossible={cell.isPossible} theme={cell.theme} key={index} value={cell.coordinate} />
+      {/* Outer loop: one <div className="row"> per rank (row) of the board. */}
+      {board.map((row, rowIndex) => (
+        <div key={rowIndex} className='row'>
+          {/* Inner loop: one <File> per square in that rank. We hand the WHOLE
+              square down as a single prop instead of spreading its fields out —
+              simpler to pass and it stays type-checked against the Square type. */}
+          {row.map((square, colIndex) => (
+            <File key={colIndex} square={square} />
           ))}
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default Board;
+export default Board

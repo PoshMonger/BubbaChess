@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+// We only need `useState` here; the automatic JSX runtime means we don't import
+// React itself (importing it unused would trip the noUnusedLocals check).
+import { useState } from "react";
 
 const Piece = ({ piece }: { piece: { image: string; name: string } }) => {
   const { image, name } = piece;
