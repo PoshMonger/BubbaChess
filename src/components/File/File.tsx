@@ -1,6 +1,12 @@
 // File.tsx — renders ONE square of the board (its themed background, plus the
 // piece standing on it if the square is occupied).
+// One component per kind of piece. Each knows how to draw ITSELF in either colour.
+import Pawn from '../Pieces/Pawn/Pawn'
+import Knight from '../Pieces/Knight/Knight'
 import Bishop from '../Pieces/Bishop/Bishop'
+import Rook from '../Pieces/Rook/Rook'
+import Queen from '../Pieces/Queen/Queen'
+import King from '../Pieces/King/King'
 // `Square` types the whole square; `Piece` (aliased to PieceModel so it can't be
 // confused with the <Piece> COMPONENT elsewhere) types a single piece.
 import type { Square, Piece as PieceModel } from '../../types'
@@ -10,13 +16,25 @@ import type { Square, Piece as PieceModel } from '../../types'
 // the switch cannot live directly in the markup. We put it in this helper, which
 // RETURNS the right element, and then call the helper from the JSX below.
 const renderPiece = (piece: PieceModel) => {
+  // Every case matches one member of the PieceType union in src/types/piece.ts.
+  // Because that union has exactly these six members and all six are handled,
+  // TypeScript knows the list is complete — misspell a case and it won't compile.
   switch (piece.type) {
-    // A bishop has its own component, which picks the right-coloured SVG.
+    case 'pawn':
+      return <Pawn piece={piece} />
+    case 'knight':
+      return <Knight piece={piece} />
     case 'bishop':
       return <Bishop piece={piece} />
-    // The other piece types don't have their own component yet, so we draw
-    // nothing for them. As you build each one, add a case here, e.g.
-    //   case 'knight': return <Knight piece={piece} />
+    case 'rook':
+      return <Rook piece={piece} />
+    case 'queen':
+      return <Queen piece={piece} />
+    case 'king':
+      return <King piece={piece} />
+    // All six types are covered above, so this is unreachable today. We keep it
+    // as a safety net: if a bad `type` ever sneaks in from outside TypeScript's
+    // reach (say, saved game data), we render nothing rather than crashing.
     default:
       return null
   }
