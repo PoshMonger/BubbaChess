@@ -1,7 +1,11 @@
 .board {
 
     display: flex;
-    flex-direction: column;
+    /* `column-reverse` renders the FIRST child (rank 1, index 0 in the array) at the
+       BOTTOM and stacks each later rank upward on top of it. This lets the data read
+       "first rank first" while the board still displays rank 8 at the top like a real
+       chessboard — the array order and the visual order are intentionally opposite. */
+    flex-direction: column-reverse;
     align-items: center;
     justify-content: center;
     width: 800px;

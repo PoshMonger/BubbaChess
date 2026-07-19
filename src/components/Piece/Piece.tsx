@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { showMoves } from "../../utils/piece";
 import type { Piece } from "../../types/piece";
-import { highlightMoves as highlightMovesAction } from "../../redux/boardSlice";
+import { highlightMoves as highlightMovesAction, unhighlightMoves as unhighlightMovesAction, setSelected as setSelectedAction, unselect as unselectAction } from "../../redux/boardSlice";
 import { useDispatch } from "react-redux";
 import "./Piece.css";
-const Piece = ({ piece }: { piece: Piece & { image: string; name: string; movementTypes: { dx: number; dy: number }[]; movementMagnitude: number } }) => {
-  const { image, name, movementTypes, movementMagnitude } = piece;
+const Piece = ({ piece }: { piece: Piece & { image: string; name: string; movementTypes: { dx: number; dy: number }[]; movementMagnitude: number, isSelected: boolean } }) => {
+  const { image, name, movementTypes, movementMagnitude, isSelected } = piece;
   const [isHovered, setIsHovered] = useState(false);
-  const [selected, setSelected] = useState(false);
+
   const dispatch = useDispatch(); 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -20,9 +20,12 @@ const Piece = ({ piece }: { piece: Piece & { image: string; name: string; moveme
   };
 
   const handleClick = () => {
-    setSelected(!selected);
-    showMoves(piece);
+    dispatch(unhighlightMovesAction({ moves: showMoves(piece) as { file: number; rank: number }[] }));
+    dispatch(unselectAction());
+    dispatch(setSelectedAction([piece.file, piece.rank])
+  );
     dispatch(highlightMovesAction({ moves: showMoves(piece) as { file: number; rank: number }[] }));
+   
   };
 
   return (
@@ -34,7 +37,7 @@ const Piece = ({ piece }: { piece: Piece & { image: string; name: string; moveme
       height={60}
       src={image}
       alt={name}
-      className={`piece ${isHovered ? "hovered" : ""} ${selected ? "selected" : ""}`}
+      className={`piece ${isHovered ? "hovered" : ""} ${isSelected ? "selected" : ""}`}
     />
   );
 };

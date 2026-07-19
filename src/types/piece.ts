@@ -25,6 +25,7 @@ export interface Piece {
   movementTypes: { dx: number; dy: number }[];
   movementMagnitude: number;
   movementRules: string[];
+  isSelected: boolean;
   // the chess name, e.g. "e4" — file LETTER then rank NUMBER  
   moves: string[]; // the moves the piece can make
   targets: string[]; // the targets the piece can move to
