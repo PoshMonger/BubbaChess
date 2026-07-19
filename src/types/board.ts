@@ -18,6 +18,7 @@ export interface File {
   piece: Piece | null;    // the piece standing here, or null when the square is empty
   isSelected: boolean;    // true while the user has this square selected
   isHovered: boolean;     // true while the mouse is hovering over this square
+  isHighlighted: boolean; // true while the square is highlighted
   theme: string;          // the visual theme / CSS class for the square, e.g. "default"
 }
 

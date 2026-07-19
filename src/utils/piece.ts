@@ -21,8 +21,8 @@ let y = piece.rank;
     }
     return pieceMovTypeArr
   })
-  console.log(moves.flat());
-return moves.flat();
+  console.log(moves.flat().filter(move => move.file >= 1 && move.file <= 8 && move.rank >= 1 && move.rank <= 8));
+return moves.flat().filter(move => move.file >= 1 && move.file <= 8 && move.rank >= 1 && move.rank <= 8);
 };
 
 export { showMoves };

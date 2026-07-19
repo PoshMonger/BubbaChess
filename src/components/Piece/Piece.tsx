@@ -5,6 +5,7 @@ import { showMoves } from "../../utils/piece";
 import type { Piece } from "../../types/piece";
 import { highlightMoves as highlightMovesAction } from "../../redux/boardSlice";
 import { useDispatch } from "react-redux";
+import "./Piece.css";
 const Piece = ({ piece }: { piece: Piece & { image: string; name: string; movementTypes: { dx: number; dy: number }[]; movementMagnitude: number } }) => {
   const { image, name, movementTypes, movementMagnitude } = piece;
   const [isHovered, setIsHovered] = useState(false);
@@ -33,7 +34,7 @@ const Piece = ({ piece }: { piece: Piece & { image: string; name: string; moveme
       height={60}
       src={image}
       alt={name}
-      className={`${isHovered ? "hovered" : ""} ${selected ? "selected" : ""}`}
+      className={`piece ${isHovered ? "hovered" : ""} ${selected ? "selected" : ""}`}
     />
   );
 };
