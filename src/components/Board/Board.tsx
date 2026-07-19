@@ -21,8 +21,8 @@ const Board = () => {
           {/* Inner loop: one <File> per square in that rank. We hand the WHOLE
               square down as a single prop instead of spreading its fields out —
               simpler to pass and it stays type-checked against the Square type. */}
-          {row.map((square, colIndex) => (
-            <File key={colIndex} square={square} />
+          {row.map((file, colIndex) => (
+            <File key={colIndex} file={file} />
           ))}
         </div>
       ))}

@@ -9,7 +9,8 @@ import Queen from '../Pieces/Queen/Queen'
 import King from '../Pieces/King/King'
 // `Square` types the whole square; `Piece` (aliased to PieceModel so it can't be
 // confused with the <Piece> COMPONENT elsewhere) types a single piece.
-import type { Square, Piece as PieceModel } from '../../types'
+import type { File, Piece as PieceModel } from '../../types'
+import './File.css'
 
 // Decide WHICH component draws a given piece.
 // A `switch` is a STATEMENT, and JSX only allows EXPRESSIONS inside `{ ... }`, so
@@ -42,20 +43,11 @@ const renderPiece = (piece: PieceModel) => {
 
 // React components receive exactly ONE props object; we destructure `square`
 // out of it, and TypeScript checks it is a Square.
-const File = ({ square }: { square: Square }) => {
+const File = ({ file }: { file: File }) => {
   // Pull out just the two fields this component uses.
-  const { piece, theme } = square
+  const { piece, theme, isSelected, isHovered, isHighlighted } = file
 
-  return (
-    // `theme` is the square's CSS class (e.g. "default"); fall back to "default"
-    // if it is ever empty so the div always has a valid theme class.
-    <div className={`file ${theme ? theme : 'default'}`}>
-      {/* Only draw a piece when the square is occupied. When `piece` is null the
-          `&&` short-circuits and nothing renders; otherwise renderPiece picks the
-          correct component for this piece's type. */}
-      {piece && renderPiece(piece)}
-    </div>
-  )
+  return <div className={`file ${theme ? theme : 'default'} ${isHovered ? 'hovered' : ''} ${isHighlighted ? 'highlighted' : ''}`}>{piece && renderPiece(piece)}</div>
 }
 
 export default File

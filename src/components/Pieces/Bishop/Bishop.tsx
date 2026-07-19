@@ -10,9 +10,16 @@ import type { Piece as PieceModel } from '../../../types'
 const Bishop = ({ piece }: { piece: PieceModel }) => {
   // Choose the correctly-coloured SVG based on which side owns this bishop.
   const colorImage = piece.color === 'white' ? whiteBishop : blackBishop
+  const movementTypes: { dx: number; dy: number }[] = [
+    {dx:1,dy:1},
+    {dx:1,dy:-1},
+    {dx:-1,dy:1},
+    {dx:-1,dy:-1}
+  ]
+  const movementMagnitude: number = 8;
   // Hand the generic <Piece> component exactly the two things it renders:
   // the image to show and a name for the <img>'s alt text.
-  return <Piece piece={{ image: colorImage, name: piece.name }} />
+  return <Piece piece={{...piece, movementTypes, movementMagnitude, image: colorImage, name: piece.name }} />
 }
 
 export default Bishop

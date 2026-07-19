@@ -18,5 +18,14 @@ export interface Piece {
   name: string;      // human-readable label, e.g. "bishop"
   color: PieceColor; // which side owns the piece
   type: PieceType;   // what kind of piece it is (drives its movement rules later)
-  value: number;     // rough point value (pawn = 1 … queen = 9); the AI will use this
+  value: number;
+  rank: number; // the rank, a NUMBER 1–8  -> this is the ROW
+  file: number; // the file, a LETTER a–h turned into number for easier calculation  -> this is the COLUMN
+  coordinates: string;
+  movementTypes: { dx: number; dy: number }[];
+  movementMagnitude: number;
+  movementRules: string[];
+  // the chess name, e.g. "e4" — file LETTER then rank NUMBER  
+  moves: string[]; // the moves the piece can make
+  targets: string[]; // the targets the piece can move to
 }

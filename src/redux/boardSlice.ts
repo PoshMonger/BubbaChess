@@ -14,6 +14,11 @@ import type { Board } from "../types";
 // unused now that the board below is written out by hand instead of via a loop.
 export const FILES = ["a", "b", "c", "d", "e", "f", "g", "h"];
 
+// Each PIECE stores its file as a NUMBER (see the Piece type), not a letter, so
+// movement math (dx/dy on the board grid) is just arithmetic. The mapping below
+// is the same order as FILES above: a→1, b→2, c→3, d→4, e→5, f→6, g→7, h→8.
+// (We use 1–8 to match ranks, which are already numbered 1–8.)
+
 // The ROWS are called "ranks" and are labelled with NUMBERS 1–8.
 // Rank 8 is drawn at the TOP of the board and rank 1 at the BOTTOM. We list the
 // numbers from 8 down to 1 so the FIRST row we build is the top row of the board.
@@ -23,104 +28,116 @@ export const RANKS = [8, 7, 6, 5, 4, 3, 2, 1];
 //  that components and future game logic can import the same definition.)
 
 // The full 8×8 board written out square-by-square (a "board literal") so you can
-// hand-edit individual squares — e.g. set `piece: "white-king"` on e1, or give a
-// square a different `theme`. It is one OUTER array of ranks (rows), and each rank
-// is an INNER array of 8 squares running from file a to file h.
+// hand-edit individual squares — swap the `piece` on a square, or give it a
+// different `theme`. It is one OUTER array of ranks (rows), and each rank is an
+// INNER array of 8 squares running from file a to file h.
 //
 // Rows are listed rank 8 (top of the board) down to rank 1 (bottom), matching how
-// the board is drawn. Every square starts empty (piece: null) and unhighlighted;
-// change any field on any line below without disturbing the others.
+// the board is drawn. This is the STANDARD STARTING POSITION: black occupies ranks
+// 8 and 7 at the top, white occupies ranks 2 and 1 at the bottom, and the four
+// middle ranks (6–3) are empty. Change any field on any line without disturbing
+// the others — deleting a piece is just putting `piece: null` back.
 const initialBoard: Board = [
   // ---- Rank 8 (top row) ----
+  // BLACK's back rank. The standard order is rook, knight, bishop, QUEEN, KING,
+  // bishop, knight, rook. The easy way to remember the middle two: the queen
+  // starts on the square matching her OWN colour (black queen -> the dark d8),
+  // and the king takes the square beside her on e8.
   [
-    // Example of a NON-empty square: a8 holds a white bishop. The `piece` value is
-    // a Piece object (name/color/type/value); the square's OWN flags (isSelected,
-    // isHovered, theme) stay on the square, NOT inside the piece.
-    { coordinate: "a8", row: 8, column: "a", piece: { name: "bishop", color: "white", type: "bishop", value: 3 }, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "b8", row: 8, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "c8", row: 8, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "d8", row: 8, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "e8", row: 8, column: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "f8", row: 8, column: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "g8", row: 8, column: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "h8", row: 8, column: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    // Anatomy of a NON-empty square: the `piece` value is a Piece object
+    // (name/color/type/value); the square's OWN flags (isSelected, isHovered,
+    // theme) stay on the square, NOT inside the piece.
+    { coordinate: "a8", rank: 8, file: "a", piece: { name: "rook", color: "black", type: "rook", value: 5, rank: 8, file: 1 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "b8", rank: 8, file: "b", piece: { name: "knight", color: "black", type: "knight", value: 3, rank: 8, file: 2 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "c8", rank: 8, file: "c", piece: { name: "bishop", color: "black", type: "bishop", value: 3, rank: 8, file: 3 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "d8", rank: 8, file: "d", piece: { name: "queen", color: "black", type: "queen", value: 9, rank: 8, file: 4 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "e8", rank: 8, file: "e", piece: { name: "king", color: "black", type: "king", value: 0, rank: 8, file: 5 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "f8", rank: 8, file: "f", piece: { name: "bishop", color: "black", type: "bishop", value: 3, rank: 8, file: 6 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "g8", rank: 8, file: "g", piece: { name: "knight", color: "black", type: "knight", value: 3, rank: 8, file: 7 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "h8", rank: 8, file: "h", piece: { name: "rook", color: "black", type: "rook", value: 5, rank: 8, file: 8 }, isSelected: false, isHovered: false, theme: "default" },
   ],
   // ---- Rank 7 ----
+  // BLACK's eight pawns fill the whole rank, shielding the back rank behind them.
   [
-    { coordinate: "a7", row: 7, column: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "b7", row: 7, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "c7", row: 7, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "d7", row: 7, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "e7", row: 7, column: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "f7", row: 7, column: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "g7", row: 7, column: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "h7", row: 7, column: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    
+    { coordinate: "a7", rank: 7, file: "a", piece: { name: "pawn", color: "black", type: "pawn", value: 1, rank: 7, file: 1 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "b7", rank: 7, file: "b", piece: { name: "pawn", color: "black", type: "pawn", value: 1, rank: 7, file: 2 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "c7", rank: 7, file: "c", piece: { name: "pawn", color: "black", type: "pawn", value: 1, rank: 7, file: 3 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "d7", rank: 7, file: "d", piece: { name: "pawn", color: "black", type: "pawn", value: 1, rank: 7, file: 4 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "e7", rank: 7, file: "e", piece: { name: "pawn", color: "black", type: "pawn", value: 1, rank: 7, file: 5 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "f7", rank: 7, file: "f", piece: { name: "pawn", color: "black", type: "pawn", value: 1, rank: 7, file: 6 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "g7", rank: 7, file: "g", piece: { name: "pawn", color: "black", type: "pawn", value: 1, rank: 7, file: 7 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "h7", rank: 7, file: "h", piece: { name: "pawn", color: "black", type: "pawn", value: 1, rank: 7, file: 8 }, isSelected: false, isHovered: false, theme: "default" },
   ],
   // ---- Rank 6 ----
   [
-    { coordinate: "a6", row: 6, column: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "b6", row: 6, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "c6", row: 6, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "d6", row: 6, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "e6", row: 6, column: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "f6", row: 6, column: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "g6", row: 6, column: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "h6", row: 6, column: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "a6", rank: 6, file: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "b6", rank: 6, file: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "c6", rank: 6, file: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "d6", rank: 6, file: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "e6", rank: 6, file: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "f6", rank: 6, file: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "g6", rank: 6, file: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "h6", rank: 6, file: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
   ],
   // ---- Rank 5 ----
   [
-    { coordinate: "a5", row: 5, column: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "b5", row: 5, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "c5", row: 5, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "d5", row: 5, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "e5", row: 5, column: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "f5", row: 5, column: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "g5", row: 5, column: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "h5", row: 5, column: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "a5", rank: 5, file: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "b5", rank: 5, file: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "c5", rank: 5, file: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "d5", rank: 5, file: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "e5", rank: 5, file: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "f5", rank: 5, file: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "g5", rank: 5, file: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "h5", rank: 5, file: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
   ],
   // ---- Rank 4 ----
   [
-    { coordinate: "a4", row: 4, column: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "b4", row: 4, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "c4", row: 4, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "d4", row: 4, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "e4", row: 4, column: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "f4", row: 4, column: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "g4", row: 4, column: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "h4", row: 4, column: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "a4", rank: 4, file: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "b4", rank: 4, file: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "c4", rank: 4, file: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "d4", rank: 4, file: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "e4", rank: 4, file: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "f4", rank: 4, file: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "g4", rank: 4, file: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "h4", rank: 4, file: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
   ],
   // ---- Rank 3 ----
   [
-    { coordinate: "a3", row: 3, column: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "b3", row: 3, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "c3", row: 3, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "d3", row: 3, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "e3", row: 3, column: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "f3", row: 3, column: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "g3", row: 3, column: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "h3", row: 3, column: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "a3", rank: 3, file: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "b3", rank: 3, file: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "c3", rank: 3, file: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "d3", rank: 3, file: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "e3", rank: 3, file: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "f3", rank: 3, file: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "g3", rank: 3, file: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "h3", rank: 3, file: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
   ],
   // ---- Rank 2 ----
+  // WHITE's eight pawns, mirroring black's rank-7 wall at the other end.
   [
-    { coordinate: "a2", row: 2, column: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "b2", row: 2, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "c2", row: 2, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "d2", row: 2, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "e2", row: 2, column: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "f2", row: 2, column: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "g2", row: 2, column: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "h2", row: 2, column: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "a2", rank: 2, file: "a", piece: { name: "pawn", color: "white", type: "pawn", value: 1, rank: 2, file: 1 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "b2", rank: 2, file: "b", piece: { name: "pawn", color: "white", type: "pawn", value: 1, rank: 2, file: 2 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "c2", rank: 2, file: "c", piece: { name: "pawn", color: "white", type: "pawn", value: 1, rank: 2, file: 3 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "d2", rank: 2, file: "d", piece: { name: "pawn", color: "white", type: "pawn", value: 1, rank: 2, file: 4 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "e2", rank: 2, file: "e", piece: { name: "pawn", color: "white", type: "pawn", value: 1, rank: 2, file: 5 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "f2", rank: 2, file: "f", piece: { name: "pawn", color: "white", type: "pawn", value: 1, rank: 2, file: 6 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "g2", rank: 2, file: "g", piece: { name: "pawn", color: "white", type: "pawn", value: 1, rank: 2, file: 7 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "h2", rank: 2, file: "h", piece: { name: "pawn", color: "white", type: "pawn", value: 1, rank: 2, file: 8 }, isSelected: false, isHovered: false, theme: "default" },
   ],
   // ---- Rank 1 (bottom row) ----
+  // WHITE's back rank. Same left-to-right order as black's rank 8, which is why
+  // the two kings face each other down the e-file and the two queens down the d-file.
+  // (White's queen on d1 also sits on her own colour — d1 is a light square.)
   [
-    { coordinate: "a1", row: 1, column: "a", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "b1", row: 1, column: "b", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "c1", row: 1, column: "c", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "d1", row: 1, column: "d", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "e1", row: 1, column: "e", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "f1", row: 1, column: "f", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "g1", row: 1, column: "g", piece: null, isSelected: false, isHovered: false, theme: "default" },
-    { coordinate: "h1", row: 1, column: "h", piece: null, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "a1", rank: 1, file: "a", piece: { name: "rook", color: "white", type: "rook", value: 5, rank: 1, file: 1 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "b1", rank: 1, file: "b", piece: { name: "knight", color: "white", type: "knight", value: 3, rank: 1, file: 2 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "c1", rank: 1, file: "c", piece: { name: "bishop", color: "white", type: "bishop", value: 3, rank: 1, file: 3 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "d1", rank: 1, file: "d", piece: { name: "queen", color: "white", type: "queen", value: 9, rank: 1, file: 4 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "e1", rank: 1, file: "e", piece: { name: "king", color: "white", type: "king", value: 0, rank: 1, file: 5 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "f1", rank: 1, file: "f", piece: { name: "bishop", color: "white", type: "bishop", value: 3, rank: 1, file: 6 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "g1", rank: 1, file: "g", piece: { name: "knight", color: "white", type: "knight", value: 3, rank: 1, file: 7 }, isSelected: false, isHovered: false, theme: "default" },
+    { coordinate: "h1", rank: 1, file: "h", piece: { name: "rook", color: "white", type: "rook", value: 5, rank: 1, file: 8 }, isSelected: false, isHovered: false, theme: "default" },
   ],
 ];
 
@@ -136,10 +153,36 @@ export const boardSlice = createSlice({
     //  the array is the state, so assigning to `state.board` did nothing useful.)
     // The `_` in `_state` tells TypeScript we intentionally don't use that argument.
     setBoard: (_state, action: PayloadAction<Board>) => action.payload,
+    movePiece: (_state, action: PayloadAction<{ from: string, to: string }>) => {
+      const { from, to } = action.payload;
+      const board = _state;
+      const piece = board.find(file => file.coordinate === from)?.piece;
+      if (piece) {
+        piece.coordinates = to;
+      }
+    },
+    highlightMoves: (_state, action: PayloadAction<{ moves: { file: number, rank: number }[] }>) => {
+      const { moves } = action.payload;
+      const board = _state;
+        board.forEach(rank => {
+            rank.forEach(file => {
+                file.isHighlighted = moves.some(move => move.file === file.file && move.rank === file.rank);
+            })
+        })
+        return board;
+    },
+    unhighlightMoves: (_state) => {
+      const board = _state;
+      const newBoard = board.map(file => {
+        return file.map(piece => {
+          return { ...piece, highlighted: false }
+        })
+      })
+    },
   },
 });
 
 // createSlice auto-builds this action creator: call setBoard(newBoard) to trigger a change.
-export const { setBoard } = boardSlice.actions;
+export const { setBoard, highlightMoves, unhighlightMoves } = boardSlice.actions;
 // The reducer is what the store registers under the "board" key — export it as default.
 export default boardSlice.reducer;
