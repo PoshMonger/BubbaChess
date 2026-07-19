@@ -10,9 +10,24 @@ import type { Piece as PieceModel } from '../../../types'
 const Knight = ({ piece }: { piece: PieceModel }) => {
   // Choose the correctly-coloured SVG based on which side owns this knight.
   const colorImage = piece.color === 'white' ? whiteKnight : blackKnight
+  // A knight jumps in an "L": two squares along one axis and one along the other,
+  // in all eight orientations. Unlike sliding pieces it does not travel down a
+  // line, so each vector is a single fixed hop (dx across files, dy across ranks).
+  const movementTypes: { dx: number; dy: number }[] = [
+    {dx:1,dy:2},
+    {dx:2,dy:1},
+    {dx:2,dy:-1},
+    {dx:1,dy:-2},
+    {dx:-1,dy:-2},
+    {dx:-2,dy:-1},
+    {dx:-2,dy:1},
+    {dx:-1,dy:2}
+  ]
+  // Magnitude 1: a knight makes exactly one jump — it never slides further.
+  const movementMagnitude: number = 1;
   // Hand the generic <Piece> component exactly the two things it renders:
   // the image to show and a name for the <img>'s alt text.
-  return <Piece piece={{ image: colorImage, name: piece.name }} />
+  return <Piece piece={{...piece, movementTypes, movementMagnitude, image: colorImage, name: piece.name }} />
 }
 
 export default Knight

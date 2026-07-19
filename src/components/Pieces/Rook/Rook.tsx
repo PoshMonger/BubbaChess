@@ -10,9 +10,20 @@ import type { Piece as PieceModel } from '../../../types'
 const Rook = ({ piece }: { piece: PieceModel }) => {
   // Choose the correctly-coloured SVG based on which side owns this rook.
   const colorImage = piece.color === 'white' ? whiteRook : blackRook
+  // A rook slides in the four STRAIGHT directions only — along its own file and
+  // rank (up, down, left, right), never diagonally. dx steps across files
+  // (columns), dy steps across ranks (rows); 0 means "don't move on that axis".
+  const movementTypes: { dx: number; dy: number }[] = [
+    {dx:1,dy:0},
+    {dx:-1,dy:0},
+    {dx:0,dy:1},
+    {dx:0,dy:-1}
+  ]
+  // Magnitude 8: it can travel the full length of the board in a single move.
+  const movementMagnitude: number = 8;
   // Hand the generic <Piece> component exactly the two things it renders:
   // the image to show and a name for the <img>'s alt text.
-  return <Piece piece={{ image: colorImage, name: piece.name }} />
+  return <Piece piece={{...piece, movementTypes, movementMagnitude, image: colorImage, name: piece.name }} />
 }
 
 export default Rook
