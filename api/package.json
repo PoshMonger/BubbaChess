@@ -1,8 +1,25 @@
 {
+  "name": "api",
+  "version": "1.0.0",
+  "description": "API for the project",
+  "main": "src/server.ts",
+  "type": "module",
+  "scripts": {
+    "dev-local": "tsx watch --env-file=.env.local src/server.ts",
+    "dev-development": "tsx watch --env-file=.env.development src/server.ts",
+    "dev-production": "tsx watch --env-file=.env.production src/server.ts",
+    "build-development": "tsc --env-file=.env.development",
+    "build-production": "tsc --env-file=.env.production",
+    "start-local": "node --env-file=.env.local dist/server.js",
+    "start-development": "node --env-file=.env.development dist/server.js",
+    "start-production": "node --env-file=.env.production dist/server.js ",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.8.1"
   },
   "devDependencies": {
@@ -10,11 +27,5 @@
     "@types/node": "^26.1.2",
     "tsx": "^4.23.1",
     "typescript": "^7.0.2"
-  },
-  "scripts": {
-    "dev": "tsx watch src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
   }
 }
