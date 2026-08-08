@@ -23,4 +23,4 @@ export interface File {
 }
 
 // The whole board is 8 rows, each holding 8 squares — hence a 2-D array.
-export type Board = File[][];
+export type BoardType = File[][];
