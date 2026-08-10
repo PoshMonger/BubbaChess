@@ -12,14 +12,14 @@ export type Coordinate = string;
 
 // The shape of ONE square on the board.
 export interface File {
-  coordinate: Coordinate; // its chess name, e.g. "e4" — file LETTER then rank NUMBER
-  rank: number;            // the rank, a NUMBER 1–8  -> this is the ROW
-  file: number;         // the file, a LETTER a–h turned into number for easier calculation  -> this is the COLUMN
-  piece: Piece | null;    // the piece standing here, or null when the square is empty
-  isSelected: boolean;    // true while the user has this square selected
-  isHovered: boolean;     // true while the mouse is hovering over this square
-  isHighlighted: boolean; // true while the square is highlighted
-  theme: string;          // the visual theme / CSS class for the square, e.g. "default"
+  coordinate: Coordinate; 
+  rank: number;            
+  file: number;         
+  piece: Piece | null;    
+  isSelected: boolean;    
+  isHovered: boolean;     
+  isHighlighted: boolean; 
+  theme: string;          
 }
 
 // The whole board is 8 rows, each holding 8 squares — hence a 2-D array.

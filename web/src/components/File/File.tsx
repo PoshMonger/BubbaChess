@@ -1,16 +1,16 @@
 // File.tsx — renders ONE square of the board (its themed background, plus the
 // piece standing on it if the square is occupied).
 // One component per kind of piece. Each knows how to draw ITSELF in either colour.
-import Pawn from '../Pieces/Pawn/Pawn'
-import Knight from '../Pieces/Knight/Knight'
-import Bishop from '../Pieces/Bishop/Bishop'
-import Rook from '../Pieces/Rook/Rook'
-import Queen from '../Pieces/Queen/Queen'
-import King from '../Pieces/King/King'
+import Pawn from "../Pieces/Pawn/Pawn";
+import Knight from "../Pieces/Knight/Knight";
+import Bishop from "../Pieces/Bishop/Bishop";
+import Rook from "../Pieces/Rook/Rook";
+import Queen from "../Pieces/Queen/Queen";
+import King from "../Pieces/King/King";
 // `Square` types the whole square; `Piece` (aliased to PieceModel so it can't be
 // confused with the <Piece> COMPONENT elsewhere) types a single piece.
-import type { File, Piece as PieceModel } from '../../types'
-import './File.css'
+import type { File, Piece as PieceModel } from "../../types";
+import "./File.css";
 
 // Decide WHICH component draws a given piece.
 // A `switch` is a STATEMENT, and JSX only allows EXPRESSIONS inside `{ ... }`, so
@@ -21,33 +21,40 @@ const renderPiece = (piece: PieceModel) => {
   // Because that union has exactly these six members and all six are handled,
   // TypeScript knows the list is complete — misspell a case and it won't compile.
   switch (piece.type) {
-    case 'pawn':
-      return <Pawn piece={piece} />
-    case 'knight':
-      return <Knight piece={piece} />
-    case 'bishop':
-      return <Bishop piece={piece} />
-    case 'rook':
-      return <Rook piece={piece} />
-    case 'queen':
-      return <Queen piece={piece} />
-    case 'king':
-      return <King piece={piece} />
+    case "pawn":
+      return <Pawn piece={piece} />;
+    case "knight":
+      return <Knight piece={piece} />;
+    case "bishop":
+      return <Bishop piece={piece} />;
+    case "rook":
+      return <Rook piece={piece} />;
+    case "queen":
+      return <Queen piece={piece} />;
+    case "king":
+      return <King piece={piece} />;
     // All six types are covered above, so this is unreachable today. We keep it
     // as a safety net: if a bad `type` ever sneaks in from outside TypeScript's
     // reach (say, saved game data), we render nothing rather than crashing.
     default:
-      return null
+      return null;
   }
-}
+};
 
 // React components receive exactly ONE props object; we destructure `square`
 // out of it, and TypeScript checks it is a Square.
 const File = ({ file }: { file: File }) => {
   // Pull out just the two fields this component uses.
-  const { piece, theme, isSelected, isHovered, isHighlighted } = file
+  const { piece, theme, isSelected, isHovered, isHighlighted } = file;
 
-  return <div className={`file ${theme ? theme : 'default'} ${isHovered ? 'hovered' : ''} ${isHighlighted ? 'highlighted' : ''}`}>{piece && renderPiece(piece)}</div>
-}
+  return (
+    <div
+      className={`file ${theme ? theme : "default"} ${isHovered ? "hovered" : ""} ${isHighlighted ? "highlighted" : ""}`}
+    >
+      <p style={{ fontSize: '.5em', fontWeight: 'bold', position: 'absolute', top: 0, left: 5, color:'green' }}>{file.coordinate}</p>
+      {piece && renderPiece(piece)}
+    </div>
+  );
+};
 
-export default File
+export default File;
