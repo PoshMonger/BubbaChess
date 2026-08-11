@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
-import { connectDB } from "./connect.js";
-import { User } from "../models/User.js";
+import { connectDB } from "./connect.ts";
+import User from "../models/User.ts";
+import Profile from "../models/Profile.ts";
+import OnlineGame from "../models/OnlineGame.ts";
 
-//Every model that needs initializing. Add future models (Game, Move) here
-//and the rest of this script needs no changes at all.
-const MODELS = [User];
+
+const MODELS = [User, Profile, OnlineGame];
 async function init() {
   //Connect to the database
   await connectDB();

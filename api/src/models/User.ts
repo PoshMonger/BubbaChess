@@ -56,4 +56,4 @@ interface IUser extends mongoose.Document {
   email: string;
   password?: string;
 }
-export const User = mongoose.model<IUser>("User", userSchema);
+export default mongoose.model<IUser>("User", userSchema);

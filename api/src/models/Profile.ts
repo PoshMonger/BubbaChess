@@ -33,7 +33,24 @@ const profileSchema = new mongoose.Schema(
       default: 1000,
     },
   },
-  { timestamps: true },
+  { timestamps: true,
+    collectionOptions: {
+      validator: {
+        $jsonSchema: {
+          bsonType: "object",
+          required: ["userId", "gamesPlayed", "gamesWon", "gamesLost", "gamesDrawn", "rating"],
+          properties: {
+            userId: {
+              bsonType: "objectId",
+            },
+          },
+          additionalProperties: false,
+        },
+      },
+      validationLevel: "strict",
+      validationAction: "warn",
+    },
+  },
 );
 
 const Profile = mongoose.model("Profile", profileSchema);

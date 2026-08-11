@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { defaultBoardState } from "../utils/defaultBoardState.js";
+import { defaultBoardState } from "../utils/defaultBoardState.ts";
 
 const onlineGameSchema = new mongoose.Schema(
   {
@@ -70,7 +70,18 @@ const onlineGameSchema = new mongoose.Schema(
       ],
     },
   },
-  { timestamps: true },
+  { timestamps: true,
+    collectionOptions: {
+      validator: {
+        $jsonSchema: {
+          bsonType: "object",
+          required: ["boardState", "moves", "timeControl", "gameStatus", "whitePlayer", "blackPlayer", "playerToMove", "gameWinner", "gameLoser", "gameResult"],
+        },
+      },
+      validationLevel: "strict",
+      validationAction: "warn",
+    },
+   },
 );
 
 const OnlineGame = mongoose.model("OnlineGame", onlineGameSchema);
