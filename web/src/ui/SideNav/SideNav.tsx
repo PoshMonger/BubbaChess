@@ -10,6 +10,9 @@ const SideNav = (props: Props) => {
             <Link to="/">Home</Link>
         </div>
         <div className="side-nav-item">
+            <Link to="/login">Login</Link>
+        </div>
+        <div className="side-nav-item">
             <Link to="/w">Games</Link>
         </div>
         <div className="side-nav-item">
